@@ -70,7 +70,7 @@ If opened in a browser, the import path itself leads to the API documentation:
 API stability
 -------------
 
-The package API for yaml v3 will remain stable.
+The package API for the package will remain stable.
 
 License
 -------
