@@ -124,6 +124,7 @@ func (dec *Decoder) UniqueKeys(enable bool) {
 func (dec *Decoder) Decode(v interface{}) (err error) {
 	d := newDecoder()
 	d.knownFields = dec.knownFields
+	d.uniqueKeys = dec.uniqueKeys
 	defer handleErr(&err)
 	node := dec.parser.parse()
 	if node == nil {
