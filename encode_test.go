@@ -18,6 +18,7 @@ package yaml_test
 import (
 	"bytes"
 	"fmt"
+	"github.com/timo-reymann/go-yaml"
 	"math"
 	"strconv"
 	"strings"
@@ -27,7 +28,6 @@ import (
 	"os"
 
 	. "gopkg.in/check.v1"
-	"gopkg.in/yaml.v3"
 )
 
 var marshalIntTest = 123

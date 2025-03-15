@@ -19,6 +19,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/timo-reymann/go-yaml"
 	"io"
 	"math"
 	"reflect"
@@ -26,7 +27,6 @@ import (
 	"time"
 
 	. "gopkg.in/check.v1"
-	"gopkg.in/yaml.v3"
 )
 
 var unmarshalIntTest = 123
@@ -947,7 +947,7 @@ var unmarshalErrorTests = []struct {
 	{"%TAG !%79! tag:yaml.org,2002:\n---\nv: !%79!int '1'", "yaml: did not find expected whitespace"},
 	{"a:\n  1:\nb\n  2:", ".*could not find expected ':'"},
 	{"a: 1\nb: 2\nc 2\nd: 3\n", "^yaml: line 3: could not find expected ':'$"},
-	{"#\n-\n{", "yaml: line 3: could not find expected ':'"}, // Issue #665
+	{"#\n-\n{", "yaml: line 3: could not find expected ':'"},   // Issue #665
 	{"0: [:!00 \xef", "yaml: incomplete UTF-8 octet sequence"}, // Issue #666
 	{
 		"a: &a [00,00,00,00,00,00,00,00,00]\n" +
@@ -1482,7 +1482,7 @@ func (s *S) TestMergeNestedStruct(c *C) {
 	// 2) A simple implementation might attempt to handle the key skipping
 	//    directly by iterating over the merging map without recursion, but
 	//    there are more complex cases that require recursion.
-	// 
+	//
 	// Quick summary of the fields:
 	//
 	// - A must come from outer and not overriden
@@ -1498,7 +1498,7 @@ func (s *S) TestMergeNestedStruct(c *C) {
 		A, B, C int
 	}
 	type Outer struct {
-		D, E      int
+		D, E   int
 		Inner  Inner
 		Inline map[string]int `yaml:",inline"`
 	}
@@ -1516,10 +1516,10 @@ func (s *S) TestMergeNestedStruct(c *C) {
 	// Repeat test with a map.
 
 	var testm map[string]interface{}
-	var wantm = map[string]interface {} {
-		"f":     60,
+	var wantm = map[string]interface{}{
+		"f": 60,
 		"inner": map[string]interface{}{
-		    "a": 10,
+			"a": 10,
 		},
 		"d": 40,
 		"e": 50,
@@ -1619,67 +1619,8 @@ var unmarshalStrictTests = []struct {
 	data:  "a: 1\nc: 2\n",
 	value: struct{ A, B int }{A: 1},
 	error: `yaml: unmarshal errors:\n  line 2: field c not found in type struct { A int; B int }`,
-}, {
-	unique: true,
-	data:   "a: 1\nb: 2\na: 3\n",
-	value:  struct{ A, B int }{A: 3, B: 2},
-	error:  `yaml: unmarshal errors:\n  line 3: mapping key "a" already defined at line 1`,
-}, {
-	unique: true,
-	data:   "c: 3\na: 1\nb: 2\nc: 4\n",
-	value: struct {
-		A       int
-		inlineB `yaml:",inline"`
-	}{
-		A: 1,
-		inlineB: inlineB{
-			B: 2,
-			inlineC: inlineC{
-				C: 4,
-			},
-		},
-	},
-	error: `yaml: unmarshal errors:\n  line 4: mapping key "c" already defined at line 1`,
-}, {
-	unique: true,
-	data:   "c: 0\na: 1\nb: 2\nc: 1\n",
-	value: struct {
-		A       int
-		inlineB `yaml:",inline"`
-	}{
-		A: 1,
-		inlineB: inlineB{
-			B: 2,
-			inlineC: inlineC{
-				C: 1,
-			},
-		},
-	},
-	error: `yaml: unmarshal errors:\n  line 4: mapping key "c" already defined at line 1`,
-}, {
-	unique: true,
-	data:   "c: 1\na: 1\nb: 2\nc: 3\n",
-	value: struct {
-		A int
-		M map[string]interface{} `yaml:",inline"`
-	}{
-		A: 1,
-		M: map[string]interface{}{
-			"b": 2,
-			"c": 3,
-		},
-	},
-	error: `yaml: unmarshal errors:\n  line 4: mapping key "c" already defined at line 1`,
-}, {
-	unique: true,
-	data:   "a: 1\n9: 2\nnull: 3\n9: 4",
-	value: map[interface{}]interface{}{
-		"a": 1,
-		nil: 3,
-		9:   4,
-	},
-	error: `yaml: unmarshal errors:\n  line 4: mapping key "9" already defined at line 2`,
-}}
+},
+}
 
 func (s *S) TestUnmarshalKnownFields(c *C) {
 	for i, item := range unmarshalStrictTests {

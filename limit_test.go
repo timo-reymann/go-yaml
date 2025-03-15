@@ -1,11 +1,11 @@
 package yaml_test
 
 import (
+	"github.com/timo-reymann/go-yaml"
 	"strings"
 	"testing"
 
 	. "gopkg.in/check.v1"
-	"gopkg.in/yaml.v3"
 )
 
 var limitTests = []struct {

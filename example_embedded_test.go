@@ -17,9 +17,8 @@ package yaml_test
 
 import (
 	"fmt"
+	"github.com/timo-reymann/go-yaml"
 	"log"
-
-	"gopkg.in/yaml.v3"
 )
 
 // An example showing how to unmarshal embedded
