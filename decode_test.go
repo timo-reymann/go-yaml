@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2011-2019 Canonical Ltd
+// Copyright (c) 2025 Timo Reymann
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1680,4 +1681,45 @@ func (s *S) TestFuzzCrashers(c *C) {
 		var v interface{}
 		_ = yaml.Unmarshal([]byte(data), &v)
 	}
+}
+
+func (s *S) TestLineNumberTracking(c *C) {
+	testCases := map[string]struct {
+		data   string
+		assert func(lm yaml.LineNumberMapping)
+	}{
+		"simple": {
+			data: "a: 1\nb: 2\n\nc:\n  foo: 3",
+			assert: func(lm yaml.LineNumberMapping) {
+				c.Assert(lm, NotNil)
+
+				c.Assert(len(lm), Equals, 4)
+				c.Assert(len(lm[1]), Equals, 4)
+				c.Assert(len(lm[2]), Equals, 2)
+			},
+		},
+		"nested object": {
+			data: "test:\n  object:\n    key: val",
+			assert: func(lm yaml.LineNumberMapping) {
+				c.Assert(len(lm), Equals, 3)
+				c.Assert(len(lm[1]), Equals, 3)
+				c.Assert(len(lm[2]), Equals, 2)
+			},
+		},
+	}
+
+	for name, testCase := range testCases {
+		c.Logf("test %s:\n%s", name, testCase.data)
+		value := map[any]any{}
+		dec := yaml.NewDecoder(bytes.NewBuffer([]byte(testCase.data)))
+		dec.WithLineNumberMapping()
+		err := dec.Decode(&value)
+		if err != nil {
+			c.Fatal(err)
+		}
+
+		lm := dec.LineNumberMapping()
+		testCase.assert(lm)
+	}
+
 }
