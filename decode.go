@@ -37,6 +37,9 @@ type parser struct {
 	anchors  map[string]*Node
 	doneInit bool
 	textless bool
+
+	trackLineNumbers   bool
+	trackedLineNumbers map[int][]*Node
 }
 
 func newParser(b []byte) *parser {
@@ -190,7 +193,17 @@ func (p *parser) node(kind Kind, defaultTag, tag, value string) *Node {
 		n.HeadComment = string(p.event.head_comment)
 		n.LineComment = string(p.event.line_comment)
 		n.FootComment = string(p.event.foot_comment)
+
+		if p.trackLineNumbers {
+			_, ok := p.trackedLineNumbers[n.Line]
+			if !ok {
+				p.trackedLineNumbers[n.Line] = []*Node{n}
+			} else {
+				p.trackedLineNumbers[n.Line] = append(p.trackedLineNumbers[n.Line], n)
+			}
+		}
 	}
+
 	return n
 }
 

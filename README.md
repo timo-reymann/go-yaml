@@ -17,7 +17,9 @@ I decided to fork the project and maintain it myself.
 Difference to the original project
 ----------------------------------
 
-- Support for non-unique keys using `Decoder#UniqueKeys`
+- Support for non-unique keys using `Decoder#UniqueKeys`.
+- Provide mapping of nodes in a line using `Decoder#LineNumberMapping`, when activated with
+  `Decoder#WithLineNumberMapping` before decoding.
 
 Compatibility
 -------------

@@ -31,6 +31,8 @@ import (
 	"unicode/utf8"
 )
 
+type LineNumberMapping map[int][]*Node
+
 // The Unmarshaler interface may be implemented by types to customize their
 // behavior when being unmarshaled from a YAML document.
 type Unmarshaler interface {
@@ -115,6 +117,20 @@ func (dec *Decoder) KnownFields(enable bool) {
 // If a key is repeated, the decoder will return an error.
 func (dec *Decoder) UniqueKeys(enable bool) {
 	dec.uniqueKeys = enable
+}
+
+// WithLineNumberMapping enables tracking all nodes in a given line number.
+// After decoding query the line number mapping using the LineNumberMapping method
+func (dec *Decoder) WithLineNumberMapping() {
+	dec.parser.trackLineNumbers = true
+	dec.parser.trackedLineNumbers = make(LineNumberMapping)
+}
+
+// LineNumberMapping returns a map of line numbers to nodes.
+// This method should only be called after decoding with the
+// WithLineNumberMapping method.
+func (dec *Decoder) LineNumberMapping() LineNumberMapping {
+	return dec.parser.trackedLineNumbers
 }
 
 // Decode reads the next YAML-encoded value from its input
