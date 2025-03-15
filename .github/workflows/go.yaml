@@ -1,7 +1,7 @@
 name: continuous
 on: [ push ]
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -16,5 +16,5 @@ jobs:
         run: go get .
       - name: Build
         run: go build -v ./...
-      - name: Test with the Go CLI
+      - name: Test
         run: go test
