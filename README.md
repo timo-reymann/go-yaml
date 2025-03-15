@@ -24,26 +24,10 @@ Difference to the original project
 Compatibility
 -------------
 
-The yaml package supports most of YAML 1.2, but preserves some behavior
-from 1.1 for backwards compatibility.
+This package is fully compatible with the original [yaml.v3](https://gopkg.in/yaml.v3) package
+and can be used as a drop-in replacement.
 
-Specifically, as of v3 of the yaml package:
-
-- YAML 1.1 bools (_yes/no, on/off_) are supported as long as they are being
-  decoded into a typed bool value. Otherwise they behave as a string. Booleans
-  in YAML 1.2 are _true/false_ only.
-- Octals encode and decode as _0777_ per YAML 1.1, rather than _0o777_
-  as specified in YAML 1.2, because most parsers still use the old format.
-  Octals in the  _0o777_ format are supported though, so new files work.
-- Does not support base-60 floats. These are gone from YAML 1.2, and were
-  actually never supported by this package as it's clearly a poor choice.
-
-and offers backwards
-compatibility with YAML 1.1 in some cases.
-1.2, including support for
-anchors, tags, map merging, etc. Multi-document unmarshalling is not yet
-implemented, and base-60 floats from YAML 1.1 are purposefully not
-supported since they're a poor design and are gone in YAML 1.2.
+It only adds additional features and does not change the existing API to ensure compile time compatibility.
 
 Installation and usage
 ----------------------
